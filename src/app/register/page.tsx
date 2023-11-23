@@ -5,7 +5,9 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
 // React Hook Form
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import schema from "./schema";
 
 // Miscellaneous
 
@@ -22,8 +24,12 @@ export default function Register() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<TInputs>();
-  const onSubmit: SubmitHandler<TInputs> = (data) => console.log(data);
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = (data: any) => console.log(data);
+
+  const { fullName, email, password, repeatPassword } = watch();
 
   return (
     <section className="min-h-screen pt-[5rem]">
@@ -36,27 +42,57 @@ export default function Register() {
           type="text"
           variant="underlined"
           label="Full Name"
-          {...register("fullName", {
-            required: true,
-          })}
+          {...register("fullName")}
+          isInvalid={
+            fullName?.length && errors.fullName?.message ? true : false
+          }
+          errorMessage={
+            fullName?.length &&
+            errors.fullName?.message &&
+            errors.fullName?.message
+          }
         />
         <Input
           type="email"
           variant="underlined"
           label="Email"
           {...register("email")}
+          isInvalid={email?.length && errors.email?.message ? true : false}
+          errorMessage={
+            email?.length && errors.email?.message && errors.email?.message
+          }
         />
         <Input
           type="password"
           variant="underlined"
           label="Password"
           {...register("password")}
+          isInvalid={
+            password?.length && errors.password?.message ? true : false
+          }
+          errorMessage={
+            password?.length &&
+            errors.password?.message &&
+            errors.password?.message
+          }
         />
         <Input
           type="password"
           variant="underlined"
-          label="RepeatPassword"
+          label="Repeat Password"
           {...register("repeatPassword")}
+          isInvalid={
+            repeatPassword?.length &&
+            errors.repeatPassword?.message &&
+            password !== repeatPassword
+              ? true
+              : false
+          }
+          errorMessage={
+            repeatPassword?.length &&
+            errors.repeatPassword?.message &&
+            errors.repeatPassword?.message
+          }
         />
         <Button
           type="submit"
