@@ -18,7 +18,7 @@ type TInputs = {
   repeatPassword: string;
 };
 
-const defaultValues = {
+const defaultValues: TInputs = {
   fullName: "",
   email: "",
   password: "",
@@ -29,18 +29,22 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    // watch,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    reset,
   } = useForm({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data: any) => console.log("SUBMITTED >", data);
+  const onSubmit = async (data: any) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // const { fullName, email, password, repeatPassword } = watch();
+    console.log("SUBMITTED >", data);
 
-  console.log("CHECK RE-RENDER");
+    reset();
+  };
+
+  console.log("RE-RENDER");
 
   return (
     <section className="min-h-screen pt-[5rem]">
@@ -56,78 +60,43 @@ export default function Register() {
             <Input
               variant="underlined"
               label="Full Name"
-              // isInvalid={
-              //   fullName?.length && errors.fullName?.message ? true : false
-              // }
-              // errorMessage={
-              //   fullName?.length &&
-              //   errors.fullName?.message &&
-              //   errors.fullName?.message
-              // }
+              isInvalid={errors.fullName?.message ? true : false}
+              errorMessage={
+                errors.fullName?.message && errors.fullName?.message
+              }
               {...field}
             />
           )}
         />
-        {/* <Input
-          type="text"
-          variant="underlined"
-          label="Full Name"
-          {...(register("fullName"),
-          {
-            onChange: (e) => console.log("name >", e.target.value),
-          })}
-          isInvalid={
-            fullName?.length && errors.fullName?.message ? true : false
-          }
-          errorMessage={
-            fullName?.length &&
-            errors.fullName?.message &&
-            errors.fullName?.message
-          }
-        /> */}
         <Input
           type="email"
           variant="underlined"
           label="Email"
           {...register("email")}
-          // isInvalid={email?.length && errors.email?.message ? true : false}
-          // errorMessage={
-          //   email?.length && errors.email?.message && errors.email?.message
-          // }
+          isInvalid={errors.email?.message ? true : false}
+          errorMessage={errors.email?.message && errors.email?.message}
         />
         <Input
           type="password"
           variant="underlined"
           label="Password"
           {...register("password")}
-          // isInvalid={
-          //   password?.length && errors.password?.message ? true : false
-          // }
-          // errorMessage={
-          //   password?.length &&
-          //   errors.password?.message &&
-          //   errors.password?.message
-          // }
+          isInvalid={errors.password?.message ? true : false}
+          errorMessage={errors.password?.message && errors.password?.message}
         />
         <Input
           type="password"
           variant="underlined"
           label="Repeat Password"
           {...register("repeatPassword")}
-          // isInvalid={
-          //   repeatPassword?.length &&
-          //   errors.repeatPassword?.message &&
-          //   password !== repeatPassword
-          //     ? true
-          //     : false
-          // }
-          // errorMessage={
-          //   repeatPassword?.length &&
-          //   errors.repeatPassword?.message &&
-          //   errors.repeatPassword?.message
-          // }
+          isInvalid={errors.repeatPassword?.message ? true : false}
+          errorMessage={
+            errors.repeatPassword?.message && errors.repeatPassword?.message
+          }
         />
         <Button
+          disabled={isSubmitting}
+          isLoading={isSubmitting}
           type="submit"
           color="primary"
           className="mt-10 flex justify-center items-center w-full col-span-2"
